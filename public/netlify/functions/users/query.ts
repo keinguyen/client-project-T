@@ -67,7 +67,8 @@ export async function query(req: Request) {
       },
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: "SERVER_ERROR", message: err }), {
+    console.log(err.message);
+    return new Response(JSON.stringify({ error: "SERVER_ERROR", message: err.message }), {
       headers: allowCORS(),
       status: 500,
     });
