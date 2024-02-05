@@ -5,6 +5,7 @@ export function Main() {
   return (
     <SocketProvider>
       <App />
+      Hello
     </SocketProvider>
   );
 }
