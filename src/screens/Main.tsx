@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import App from '../App';
 import { socketService } from '../services/socketService';
 
 export function Main() {
