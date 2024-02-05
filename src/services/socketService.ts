@@ -3,7 +3,7 @@ import { ClientToServerEvents, ServerToClientEvents } from '../models/event';
 
 class SocketService {
   private readonly socket: Socket<ServerToClientEvents, ClientToServerEvents> =
-    io('ws://appraisal-hub.onrender.com', {
+    io('wss://appraisal-hub.onrender.com', {
       autoConnect: true,
       transports: ['websocket'],
     });
