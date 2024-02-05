@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { LoginForm } from "../components/stateful/LoginForm";
-import { useSocketSelector } from "../store/socket";
+import styled from 'styled-components';
+import { LoginForm } from '../components/stateful/LoginForm';
+import { useSocketSelector } from '../store/socket';
 
 export function Connect() {
   const isLoggedIn = useSocketSelector((store) => !!store.socket);
@@ -9,11 +9,9 @@ export function Connect() {
     <ConnectStyled>
       <LoginForm />
 
-      {isLoggedIn }
+      {isLoggedIn}
     </ConnectStyled>
   );
 }
 
-const ConnectStyled = styled.div`
-
-`;
+const ConnectStyled = styled.div``;
