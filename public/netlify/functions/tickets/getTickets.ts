@@ -1,8 +1,10 @@
 import { fql } from 'fauna';
-import { allowCORS, getDb } from './helpers';
 import { Ticket } from './interface';
+import { IResponse } from '../helpers/request';
+import { getDb } from '../helpers/server';
 
-export async function getTickets() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function getTickets(res: Request): Promise<IResponse> {
   try {
     const db = getDb();
 
@@ -10,17 +12,17 @@ export async function getTickets() {
       fql`Tickets.all() { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
     );
 
-    return new Response(JSON.stringify(data, null, 2), {
-      headers: allowCORS(),
-    });
+    if (data) {
+      throw new Error('NO TICKET FOUND');
+    }
+
+    return { data };
   } catch (err) {
-    console.log(err.message);
-    return new Response(
-      JSON.stringify({ error: 'SERVER_ERROR', message: err.message }),
-      {
-        headers: allowCORS(),
-        status: 500,
-      }
-    );
+    console.log('GET TICKETS ERROR:', err.message);
+
+    return {
+      data: { error: 'SERVER_ERROR', message: err.message },
+      status: 500,
+    };
   }
 }

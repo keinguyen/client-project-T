@@ -1,7 +1,8 @@
 import { fql } from 'fauna';
 import * as yup from 'yup';
-import { allowCORS, getDb } from './helpers';
 import { Ticket } from './interface';
+import { getDb } from '../helpers/server';
+import { IResponse } from '../helpers/request';
 
 const schema = yup.object({
   patientInfo: yup.object({
@@ -26,18 +27,17 @@ function isValidBody(body: Ticket): body is Ticket {
   }
 }
 
-export async function create(req: Request) {
+export async function create(req: Request): Promise<IResponse> {
   try {
     const db = getDb();
 
     const body = await req.json();
-    console.log('body:', body);
 
     if (!isValidBody(body)) {
-      return new Response(JSON.stringify({ error: 'INVALID_BODY' }), {
-        headers: allowCORS(),
+      return {
+        data: { error: 'INVALID_BODY' },
         status: 400,
-      });
+      };
     }
 
     const { createBy, desc, patientInfo, price, status, channelId, title } =
@@ -47,16 +47,13 @@ export async function create(req: Request) {
       Tickets.create({ title: ${title}, desc: ${desc}, channelId: ${channelId}, status: ${status}, patientInfo: ${patientInfo}, createBy: ${createBy}, price: ${price} })
     `);
 
-    return new Response(JSON.stringify({ status: 'success' }, null, 2), {
-      headers: allowCORS(),
-    });
+    return {
+      data: { status: 'Create Ticket Success' },
+    };
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: 'SERVER_ERROR', message: err }),
-      {
-        headers: allowCORS(),
-        status: 500,
-      }
-    );
+    return {
+      data: { error: 'SERVER_ERROR', message: err },
+      status: 500,
+    };
   }
 }

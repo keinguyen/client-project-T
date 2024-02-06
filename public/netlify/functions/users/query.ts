@@ -1,7 +1,8 @@
-import { fql } from "fauna";
-import jwt from "jsonwebtoken";
-import { allowCORS, getDb, getTokenSecret, hashPassword, isValidParams } from "./helpers";
-import { IUserResponse } from "./interface";
+import { fql } from 'fauna';
+import { getDb, isValidParams } from '../helpers/server';
+import { IUserResponse } from './interface';
+import { IResponse } from '../helpers/request';
+import { createToken, hashPassword } from '../helpers/security';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidBody(body: any): body is { username: string; password: string } {
@@ -15,26 +16,21 @@ function isValidBody(body: any): body is { username: string; password: string } 
   return true;
 }
 
-export async function query(req: Request) {
+export async function query(req: Request): Promise<IResponse> {
   try {
-    console.log('get');
     const db = getDb();
-
-    // const body = await req.q
     const url = new URL(req.url);
-    console.log(url.searchParams);
 
     const body = {
       username: url.searchParams.get('username'),
       password: url.searchParams.get('password'),
     };
 
-
     if (!isValidBody(body)) {
-      return new Response(JSON.stringify({ error: "INVALID_BODY" }), {
-        headers: allowCORS(),
+      return {
+        data: { error: 'INVALID_BODY' },
         status: 400,
-      });
+      };
     }
 
     const { username, password } = body;
@@ -42,35 +38,26 @@ export async function query(req: Request) {
     const { data } = await db.query<IUserResponse | null>(fql`Users.firstWhere(.username == ${username})`);
 
     if (!data || hashPassword(password) !== data.password) {
-      return new Response(JSON.stringify({ error: "INVALID_USER_QUERY" }), {
-        headers: allowCORS(),
+      return {
+        data: { error: 'INVALID_USER_QUERY' },
         status: 502,
-      });
+      };
     }
 
-    const accessToken = jwt.sign({ userId: data.username }, getTokenSecret(), {
-      expiresIn: '8h',
-    });
-
-    const refreshToken = jwt.sign({ userId: data.username }, getTokenSecret(), {
-      expiresIn: '1d',
-    });
-
-    return new Response(
-      JSON.stringify({
-        accessToken,
-        refreshToken,
+    return {
+      data: {
+        accessToken: createToken(data.username),
+        refreshToken: createToken(data.username, true),
         username: data.username,
         role: data.role,
-      }), {
-        headers: allowCORS(),
       },
-    );
+    };
   } catch (err) {
-    console.log(err.message);
-    return new Response(JSON.stringify({ error: "SERVER_ERROR", message: err.message }), {
-      headers: allowCORS(),
+    console.log('QUERY USER ERROR:', err.message);
+
+    return {
+      data: { error: 'SERVER_ERROR', message: err.message },
       status: 500,
-    });
+    };
   }
 }

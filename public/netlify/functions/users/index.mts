@@ -1,12 +1,18 @@
-import { create } from "./create";
-import { query } from "./query";
+import { IResponse, response } from '../helpers/request';
+import { create } from './create';
+import { query } from './query';
 
 export default async (req: Request) => {
-  if (req.method === "GET") {
-    return await query(req);
-  } else if (req.method === "POST") {
-    return await create(req);
+  let res: IResponse = {
+    data: { error: 'NO_VALID_METHOD' },
+    status: 400,
+  };
+
+  if (req.method === 'GET') {
+    res = await query(req);
+  } else if (req.method === 'POST') {
+    res = await create(req);
   }
 
-  return new Response(JSON.stringify({ error: "NO_VALID_METHOD" }))
+  return response(res);
 }

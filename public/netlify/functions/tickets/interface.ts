@@ -1,3 +1,8 @@
+export enum TicketAPI {
+  GET_LIST = 'tickets.api.getList',
+  CREATE_TICKET = 'tickets.api.createTicket',
+}
+
 export enum TicketStatus {
   WAITING = 'WAITING',
   PENDING = 'PENDING',

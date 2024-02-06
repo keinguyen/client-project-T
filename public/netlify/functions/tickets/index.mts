@@ -1,28 +1,35 @@
+import { IResponse, response } from '../helpers/request';
 import { create } from './create';
 import { getTickets } from './getTickets';
+import { TicketAPI } from './interface';
 
-const func = (req: Request) => {
-  if (req.method === 'GET') {
-    return {
-      'tickets.api.getList': getTickets,
-    };
-  }
+type APIFunction = {
+  [key: string]: (res: Request) => Promise<IResponse>;
+}
 
-  if (req.method === 'POST') {
-    return {
-      'tickets.api.createTicket': create,
-    };
-  }
+const availableAPIs: Record<string, APIFunction> = {
+  GET: {
+    [TicketAPI.GET_LIST]: getTickets,
+  },
+  POST: {
+    [TicketAPI.CREATE_TICKET]: create,
+  },
 };
 
 export default async (req: Request) => {
-  const subject = req.headers.get('subject');
+  const subject = req.headers.get('subject') as TicketAPI | undefined;
+  let res: IResponse = {
+    data: { error: 'NO_VALID_METHOD' },
+    status: 400,
+  };
 
   if (subject) {
-    const callApi = func(req)?.[subject];
-    if (callApi) return await callApi(req);
-    return new Response(JSON.stringify({ error: 'NO_VALID_METHOD' }));
+    const callApi = availableAPIs[req.method as keyof typeof availableAPIs]?.[subject];
+
+    if (callApi) {
+      res = await callApi(req);
+    }
   }
 
-  return new Response(JSON.stringify({ error: 'NO_VALID_METHOD' }));
+  return response(res);
 };

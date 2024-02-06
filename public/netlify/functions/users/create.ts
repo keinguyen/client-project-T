@@ -1,5 +1,7 @@
-import { fql } from "fauna";
-import { allowCORS, getDb, hashPassword, isValidParams } from "./helpers";
+import { fql } from 'fauna';
+import { IResponse } from '../helpers/request';
+import { getDb, isValidParams } from '../helpers/server';
+import { hashPassword } from '../helpers/security';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidBody(body: any): body is { username: string; password: string; role: string } {
@@ -14,18 +16,16 @@ function isValidBody(body: any): body is { username: string; password: string; r
   return true;
 }
 
-export async function create(req: Request) {
+export async function create(req: Request): Promise<IResponse> {
   try {
-
     const db = getDb();
-
     const body = await req.json();
 
     if (!isValidBody(body)) {
-      return new Response(JSON.stringify({ error: "INVALID_BODY" }), {
-        headers: allowCORS(),
+      return {
+        data: { error: 'INVALID_BODY' },
         status: 400,
-      });
+      };
     }
 
     const { username, password, role } = body;
@@ -33,10 +33,10 @@ export async function create(req: Request) {
     const { data } = await db.query(fql`Users.firstWhere(.username == ${username})`);
 
     if (data) {
-      return new Response(JSON.stringify({ error: "EXISTED_USER" }), {
-        headers: allowCORS(),
+      return {
+        data: { error: 'EXISTED_USER' },
         status: 502,
-      });
+      };
     }
 
     const hashedPassword = hashPassword(password);
@@ -45,13 +45,15 @@ export async function create(req: Request) {
       Users.create({ username: ${username}, password: ${hashedPassword}, role: ${role} })
     `);
 
-    return new Response("success", {
-      headers: allowCORS(),
-    });
+    return {
+      data: { message: 'CREATE USER SUCCESS' },
+    };
   } catch (err) {
-    return new Response(JSON.stringify({ error: "SERVER_ERROR", message: err }), {
-      headers: allowCORS(),
+    console.log('CREATE USER ERROR:', err.message);
+
+    return {
+      data: { error: 'SERVER_ERROR', message: err.message },
       status: 500,
-    });
+    };
   }
 }
