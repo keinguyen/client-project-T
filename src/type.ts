@@ -1,9 +1,3 @@
-export enum TicketAPI {
-  GET_LIST = 'tickets.api.getList',
-  CREATE_TICKET = 'tickets.api.createTicket',
-  GOOGLE_AUTHENTICATE = 'tickets.api.google',
-}
-
 export enum TicketStatus {
   WAITING = 'WAITING',
   PENDING = 'PENDING',
@@ -11,11 +5,13 @@ export enum TicketStatus {
 }
 
 export type Ticket = {
+  id?: string;
+  ts?: { isoString: string };
   createBy: string;
   title: string;
   desc: string;
-  price: number;
   channelId: string;
+  price: number;
   patientInfo: {
     fisrtName: string;
     lastName: string;
