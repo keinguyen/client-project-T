@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { socketService } from '../services/socketService';
 
-export function Main() {
+export function SampleDolby() {
   const [accept, setAccept] = useState(false);
   const [dolbyData, setDolbyData] = useState<{
     streamName: string;

@@ -2,7 +2,7 @@ import { fql } from 'fauna';
 import * as yup from 'yup';
 import { Ticket } from './interface';
 import { getDb } from '../helpers/server';
-import { IResponse } from '../helpers/request';
+import { IResponse } from '../interfaces';
 
 const schema = yup.object({
   patientInfo: yup.object({

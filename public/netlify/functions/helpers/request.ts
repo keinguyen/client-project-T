@@ -1,6 +1,7 @@
-export interface IResponse {
-  data?: BodyInit | Record<string, unknown> | unknown[] | null;
-  status?: number;
+import { HandleMiddleware, IResponse } from "../interfaces";
+
+export function getAuthorization(req: Request) {
+  return req.headers.get('Authorization');
 }
 
 export function response(res: IResponse, contentType = 'application/json') {
@@ -17,4 +18,19 @@ export function response(res: IResponse, contentType = 'application/json') {
     },
     status: res.status,
   })
+}
+
+type FinalMiddlewareAction = (req: Request) => Promise<Response>;
+export function withMiddlewares(middlewares: HandleMiddleware[], action: FinalMiddlewareAction) {
+  return async (req: Request) => {
+    for (const mw of middlewares) {
+      const value = await mw(req);
+
+      if (value !== true) {
+        return value;
+      }
+    }
+
+    return await action(req);
+  }
 }

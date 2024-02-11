@@ -1,4 +1,5 @@
-import { IResponse, response } from '../helpers/request';
+import { response } from '../helpers/request';
+import { IResponse } from '../interfaces';
 import { create } from './create';
 import { query } from './query';
 

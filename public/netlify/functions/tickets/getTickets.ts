@@ -1,7 +1,7 @@
 import { fql } from 'fauna';
 import { Ticket } from './interface';
-import { IResponse } from '../helpers/request';
 import { getDb } from '../helpers/server';
+import { IResponse } from '../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getTickets(res: Request): Promise<IResponse> {

@@ -1,8 +1,8 @@
 import { fql } from 'fauna';
 import { getDb, isValidParams } from '../helpers/server';
 import { IUserResponse } from './interface';
-import { IResponse } from '../helpers/request';
 import { createToken, hashPassword } from '../helpers/security';
+import { IResponse } from '../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidBody(body: any): body is { username: string; password: string } {
