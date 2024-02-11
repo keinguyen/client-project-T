@@ -1,5 +1,5 @@
 import { StorageKey } from '@/constants/storage';
-import axios, { isAxiosError, isCancel, AxiosInstance, AxiosError } from 'axios';
+import axios, { isAxiosError, isCancel, AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
 
 const getAuthorization = () => localStorage.getItem(StorageKey.Token);
 
@@ -14,48 +14,62 @@ class HttpClient {
     this.client = axios.create({ baseURL });
   }
 
-  public async get<T>(url: string, params?: Record<string, unknown>, ctrl?: AbortController) {
+  public async get<T>(url: string, params?: Record<string, unknown>, opt?: AxiosRequestConfig) {
     const { data } = await this.client.get<T>(url, {
+      ...opt,
       params,
-      headers: getHeaders(),
-      signal: ctrl?.signal,
+      headers: {
+        ...opt?.headers,
+        ...getHeaders()
+      },
     });
 
     return data;
   }
 
-  public async post<T>(url: string, body?: Record<string, unknown>, ctrl?: AbortController) {
+  public async post<T>(url: string, body?: Record<string, unknown>, opt?: AxiosRequestConfig) {
     const { data } = await this.client.post<T>(url, body, {
-      headers: getHeaders(),
-      signal: ctrl?.signal,
+      ...opt,
+      headers: {
+        ...opt?.headers,
+        ...getHeaders()
+      },
     });
 
     return data;
   }
 
-  public async put<T>(url: string, body?: Record<string, unknown>, ctrl?: AbortController) {
+  public async put<T>(url: string, body?: Record<string, unknown>, opt?: AxiosRequestConfig) {
     const { data } = await this.client.put<T>(url, body, {
-      headers: getHeaders(),
-      signal: ctrl?.signal,
+      ...opt,
+      headers: {
+        ...opt?.headers,
+        ...getHeaders()
+      },
     });
 
     return data;
   }
 
-  public async patch<T>(url: string, body?: Record<string, unknown>, ctrl?: AbortController) {
+  public async patch<T>(url: string, body?: Record<string, unknown>, opt?: AxiosRequestConfig) {
     const { data } = await this.client.patch<T>(url, body, {
-      headers: getHeaders(),
-      signal: ctrl?.signal,
+      ...opt,
+      headers: {
+        ...opt?.headers,
+        ...getHeaders()
+      },
     });
 
     return data;
   }
 
-  public async delete<T>(url: string, params?: Record<string, unknown>, ctrl?: AbortController) {
+  public async delete<T>(url: string, params?: Record<string, unknown>, opt?: AxiosRequestConfig) {
     const { data } = await this.client.delete<T>(url, {
       params,
-      headers: getHeaders(),
-      signal: ctrl?.signal,
+      headers: {
+        ...opt?.headers,
+        ...getHeaders()
+      },
     });
 
     this.client.interceptors.request

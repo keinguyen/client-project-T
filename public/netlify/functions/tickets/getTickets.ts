@@ -8,15 +8,17 @@ export async function getTickets(res: Request): Promise<IResponse> {
   try {
     const db = getDb();
 
-    const { data } = await db.query<Array<Ticket> | null>(
+    const res = await db.query<{ data: Ticket[] } | null>(
       fql`Tickets.all() { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
     );
 
-    if (data) {
+    const { data } = res;
+
+    if (!data?.data?.length) {
       throw new Error('NO TICKET FOUND');
     }
 
-    return { data };
+    return { data: data.data };
   } catch (err) {
     console.log('GET TICKETS ERROR:', err.message);
 

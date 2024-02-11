@@ -23,14 +23,6 @@ export const router = createBrowserRouter([
               return { Component };
             },
           },
-          // {
-          //   path: '/connect',
-          //   async lazy() {
-          //     const { Connect: Component } = await import('@/screens/Connect');
-
-          //     return { Component };
-          //   },
-          // },
           { path: '*', element: <Navigate to={Route.Main} replace /> },
         ],
       },

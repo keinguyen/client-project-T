@@ -9,7 +9,9 @@ export async function login(params: { username: string, password: string }) {
 }
 
 export async function getProfile(ctrl?: AbortController) {
-  const response = await http.get<{ username: string }>(API.Profile, undefined, ctrl);
+  const response = await http.get<{ username: string }>(API.Profile, undefined, {
+    signal: ctrl?.signal,
+  });
 
   return response;
 }

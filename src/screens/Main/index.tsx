@@ -1,26 +1,18 @@
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useLocalStorage } from '@keinguyen/hooks/useStorage';
 
 import { StorageKey } from '@/constants/storage';
 import { Route } from '@/constants/routes';
+import { SocketProvider } from '@/store/socket';
 
 import { useProfileEffect } from './hooks/useProfileEffect';
-import { useEffect } from 'react';
-import { getRoleFromToken } from '@/helpers/token';
+import { useRedirectEffect } from './hooks/useRedirectEffect';
+import { useInitSocketEffect } from './hooks/useInitSocketEffect';
 
 function PrivateRoute() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
   useProfileEffect();
-
-  useEffect(() => {
-    const role = getRoleFromToken();
-
-    if (pathname === Route.Main && role === 'admin') {
-      navigate(Route.Connections);
-    }
-  }, [pathname, navigate]);
+  useRedirectEffect();
+  useInitSocketEffect();
 
   return <Outlet />;
 }
@@ -28,5 +20,9 @@ function PrivateRoute() {
 export function Main() {
   const [token] = useLocalStorage(StorageKey.Token);
 
-  return token ? <PrivateRoute /> : <Navigate to={Route.Login} />;
+  return !token ? <Navigate to={Route.Login} /> : (
+    <SocketProvider>
+      <PrivateRoute />
+    </SocketProvider>
+  );
 }

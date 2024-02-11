@@ -1,20 +1,23 @@
 import { useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { useSocketCommit, useSocketLazySelector } from '../store/socket';
+import { useLocalStorage } from '@keinguyen/hooks';
+import { StorageKey } from '@/constants/storage';
 
-export function useSocket() {
+export function useSocketActions() {
   const socketCommit = useSocketCommit();
   const getSocket = useSocketLazySelector((store) => store.socket);
+  const [token] = useLocalStorage(StorageKey.Token);
 
-  const init = useCallback((username: string) => {
-    const socket = io('ws://127.0.0.1:3000', {
-      auth: {
-        token: username
-      }
+  const init = useCallback(() => {
+    const socket = io(import.meta.env.VITE_SOCKET_SERVER, {
+      autoConnect: true,
+      transports: ['websocket'],
+      auth: { token },
     });
 
     socketCommit({ socket });
-  }, [socketCommit]);
+  }, [socketCommit, token]);
 
   const disconnect = useCallback(() => {
     const socket = getSocket();
