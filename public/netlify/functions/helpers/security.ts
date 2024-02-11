@@ -9,10 +9,14 @@ const getSecretKey = (isRefresh?: boolean) => (
   isRefresh ? 'secret-refresh-token-jwt' : 'secret-token-jwt'
 );
 
-export function createToken(userId: string, isRefresh?: boolean) {
+interface TokenPayload  {
+  userId: string;
+  role: string;
+}
+export function createToken(payload: TokenPayload, isRefresh?: boolean) {
   const expiresIn = isRefresh ? '1d' : '8h';
 
-  return jwt.sign({ userId }, getSecretKey(isRefresh), {
+  return jwt.sign(payload, getSecretKey(isRefresh), {
     expiresIn,
   });
 }

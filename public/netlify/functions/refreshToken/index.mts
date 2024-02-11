@@ -16,9 +16,10 @@ export default async function (req: Request) {
     const isValidRefreshToken = parsedRefreshToken && typeof parsedRefreshToken !== 'string';
 
     if (
-      !isValidToken ||
-      !isValidRefreshToken ||
-      parsedRefreshToken.userId !== parsedToken.userId
+      !isValidToken
+      || !isValidRefreshToken
+      || parsedRefreshToken.userId !== parsedToken.userId
+      || parsedRefreshToken.role !== parsedToken.role
     ) {
       throw new Error();
     }
@@ -36,7 +37,10 @@ export default async function (req: Request) {
       throw new Error();
     }
 
-    const newAccessToken = createToken(parsedToken.userId);
+    const newAccessToken = createToken({
+      userId: parsedToken.userId,
+      role: parsedToken.role,
+    });
 
     return response({
       data: { accessToken: newAccessToken, refreshToken },

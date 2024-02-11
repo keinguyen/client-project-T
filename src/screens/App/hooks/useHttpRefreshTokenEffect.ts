@@ -18,7 +18,6 @@ export function useHttpRefreshTokenEffect() {
 
         localStorage.setItem(StorageKey.Token, newAccessToken);
 
-        console.log(newAccessToken);
         return true;
       } catch (err) {
         localStorage.removeItem(StorageKey.Token);

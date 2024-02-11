@@ -7,9 +7,10 @@ import { Route } from "@/constants/routes";
 import { StorageKey } from "@/constants/storage";
 import { Container, Form, LoginStyled, ServerErrorMessage, Title } from "./Login.styles";
 import { login } from "@/services/users";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { http } from "@/services/http";
 import { ErrorCode } from "@/constants/errors";
+import { getRoleFromToken } from "@/helpers/token";
 
 interface ILoginFormState {
   username: string;
@@ -85,8 +86,16 @@ function LoginPage() {
   );
 }
 
+function PrivateRoute({ token }: { token: string }) {
+  const role = useMemo(() => getRoleFromToken(token), [token]);
+
+  const path = role === 'admin' ? Route.Connections : Route.Main;
+
+  return <Navigate to={path} />;
+}
+
 export function Login() {
   const [token] = useLocalStorage(StorageKey.Token);
 
-  return token ? <Navigate to={Route.Main} /> : <LoginPage />;
+  return token ? <PrivateRoute token={token} /> : <LoginPage />;
 }

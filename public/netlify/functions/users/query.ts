@@ -44,10 +44,12 @@ export async function query(req: Request): Promise<IResponse> {
       };
     }
 
+    const tokenPayload = { userId: data.username, role: data.role };
+
     return {
       data: {
-        accessToken: createToken(data.username),
-        refreshToken: createToken(data.username, true),
+        accessToken: createToken(tokenPayload),
+        refreshToken: createToken(tokenPayload, true),
         username: data.username,
         role: data.role,
       },

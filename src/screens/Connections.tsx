@@ -4,23 +4,23 @@ import { useSocket } from '../hooks/useSocket';
 import { useConnectionList } from '../hooks/useConnectionsList';
 
 export function Connections() {
-  const { init, disconnect } = useSocket();
-  const { connectionList } = useConnectionList();
+  // const { init, disconnect } = useSocket();
+  // const { connectionList } = useConnectionList();
 
-  useEffect(() => {
-    init('manager');
+  // useEffect(() => {
+  //   init('manager');
 
-    return () => {
-      disconnect()
-    }
-  }, [init, disconnect]);
+  //   return () => {
+  //     disconnect()
+  //   }
+  // }, [init, disconnect]);
 
   return (
     <ConnectionsStyled>
       <UserList>
-        {connectionList.map((value) => (
+        {/* {connectionList.map((value) => (
           <UserItem key={value}>{value}</UserItem>
-        ))}
+        ))} */}
       </UserList>
       <ContentContainer>
 

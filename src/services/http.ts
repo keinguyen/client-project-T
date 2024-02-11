@@ -101,4 +101,4 @@ class HttpClient {
   }
 }
 
-export const http = new HttpClient(import.meta.env.VITE_SERVERLESS_URL);
+export const http = new HttpClient(`${location.origin}/.netlify/functions`);
