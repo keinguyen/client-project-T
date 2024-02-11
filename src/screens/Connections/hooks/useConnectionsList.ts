@@ -5,7 +5,7 @@ import { http } from '@/services/http';
 
 export function useConnectionList() {
   const socket = useSocketSelector((store) => store.socket);
-  const [connectionList, setConnectionList] = useState([] as string[]);
+  const [connectionList, setConnectionList] = useState([] as any[]);
 
   useEffect(() => {
     if (!socket) {

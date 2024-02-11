@@ -7,8 +7,8 @@ export function Connections() {
   return (
     <ConnectionsStyled>
       <UserList>
-        {connectionList.map((value) => (
-          <UserItem key={value}>{value}</UserItem>
+        {connectionList.map((value, idx) => (
+          <UserItem key={idx}>{JSON.stringify(value)}</UserItem>
         ))}
       </UserList>
       <ContentContainer>
