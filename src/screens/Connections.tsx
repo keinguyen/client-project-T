@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import styled from 'styled-components';
-import { useSocket } from '../hooks/useSocket';
-import { useConnectionList } from '../hooks/useConnectionsList';
+// import { useSocket } from '../hooks/useSocket';
+// import { useConnectionList } from '../hooks/useConnectionsList';
 
 export function Connections() {
   // const { init, disconnect } = useSocket();
@@ -47,13 +47,13 @@ const UserList = styled.ul`
   border: 1px solid green;
 `;
 
-const UserItem = styled.li`
-  padding: 6px 12px;
+// const UserItem = styled.li`
+//   padding: 6px 12px;
 
-  &:hover {
-    background-color: rgba(0,0,0,.1);
-  }
-`;
+//   &:hover {
+//     background-color: rgba(0,0,0,.1);
+//   }
+// `;
 
 const ContentContainer = styled.div`
   border: 1px solid red;
