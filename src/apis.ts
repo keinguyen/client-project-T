@@ -27,5 +27,5 @@ export const requestAPI = async <T>(params: {
     });
 
   console.log(`End request ${subject}`);
-  return result.data;
+  return result;
 };

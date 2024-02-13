@@ -14,11 +14,11 @@ export async function getTickets(res: Request): Promise<IResponse> {
 
     const { data } = res;
 
-    if (!data?.data?.length) {
-      throw new Error('NO TICKET FOUND');
-    }
+    // if (!data?.data?.length) {
+    //   throw new Error('NO TICKET FOUND');
+    // }
 
-    return { data: data.data };
+    return { data: data?.data };
   } catch (err) {
     console.log('GET TICKETS ERROR:', err.message);
 

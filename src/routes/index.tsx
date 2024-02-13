@@ -18,8 +18,8 @@ export const router = createBrowserRouter([
           {
             path: Route.Connections,
             async lazy() {
-              const { Connections: Component } = await import(
-                '@/screens/Connections'
+              const { TicketScreen: Component } = await import(
+                '@/screens/Ticket'
               );
 
               return { Component };

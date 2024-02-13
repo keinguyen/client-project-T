@@ -6,7 +6,7 @@ export default function useChatListener() {
     streamChatServices.init(
       {
         name: 'demo3',
-        userId: 'demp3',
+        userId: 'demo3',
         chatToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGVtbzMifQ.yc7lgkcmczL8Q9kVVcigJoLFwz5ILDjt0WsuQTNKxh4',
       }
