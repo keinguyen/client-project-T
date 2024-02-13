@@ -18,7 +18,9 @@ export const router = createBrowserRouter([
           {
             path: Route.Connections,
             async lazy() {
-              const { Connections: Component } = await import('@/screens/Connections');
+              const { Connections: Component } = await import(
+                '@/screens/Connections'
+              );
 
               return { Component };
             },
@@ -34,6 +36,6 @@ export const router = createBrowserRouter([
           return { Component };
         },
       },
-    ]
+    ],
   },
 ]);

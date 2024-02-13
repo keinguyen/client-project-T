@@ -43,12 +43,15 @@ export async function create(req: Request): Promise<IResponse> {
     const { createBy, desc, patientInfo, price, status, channelId, title } =
       body;
 
-    await db.query(fql`
+    const result = await db.query(fql`
       Tickets.create({ title: ${title}, desc: ${desc}, channelId: ${channelId}, status: ${status}, patientInfo: ${patientInfo}, createBy: ${createBy}, price: ${price} })
     `);
 
+    const ticketId = result.data?.['id'];
     return {
-      data: { status: 'Create Ticket Success' },
+      data: {
+        ticketId,
+      },
     };
   } catch (err) {
     return {
