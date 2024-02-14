@@ -12,7 +12,8 @@ export const requestAPI = async <T>(params: {
   const result = await fetch(
     new URL(
       `.netlify/functions/${subject.split('.')[0]}`,
-      'http://localhost:8888/'
+      // 'http://localhost:8888/'
+      'https://ephemeral-salmiakki-1ae238.netlify.app/'
     ),
     {
       mode: 'cors',

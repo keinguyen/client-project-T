@@ -1,20 +1,20 @@
+import { fql } from 'fauna';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
-import { IResponse } from '../helpers/request';
 import { getDb } from '../helpers/server';
-import { fql } from 'fauna';
+import { IResponse } from '../interfaces';
 
 class GoogleDriveService {
   private oauth2Client;
-  private folderId = '1VPYiuW1M7PMPsKFxoSOpD3sTn_-tZGAN';
+  private folderId = '1y-_5bxfabZVe0RVaN919IYB1Vq6tF-ii';
 
   constructor() {
     this.oauth2Client = new google.auth.GoogleAuth({
       credentials: {
         private_key:
-          '-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNsS035N1jIAID\nQOiwO+ArB3w6w1DLfsR3JEspgrQv5biNeFVoO8+H0QkBVzVY6KtwHSJ1/9eT/1LI\nBINHmyNc2nizt8lSysRiBCR7CzuMW7n5TeKL0/eeArC+npuXgRE/iQO0qf/6tkg7\nzZiJkleAZoBpTjEA5SRR9diDFCk81ikpdGbTRpo0tNkb9lDrvomqDAESAnEPgw2L\ntqoTL7tDOhckW0xgw5xCM6koFwynoa0PXfxkFwsrkbwBtzqBvEALORYAO2bvzgy0\nARFuwttmH0Xog9i5vNWdZENaKoVAt/Gj5FfoiXihozoKdISS0671Qjx9w1DmXoeI\nrImHHz2hAgMBAAECggEAC0rZcUgQA6O/KIp1G9rgVROILkglVMXMCxY1gCe937FM\nTVMYgwjTWb1P+PlCMa0YX3xFiqtuxyAw64jHAIL+X2Y+b2GglXpK3MPQdK34zMfq\n1JGerIilRqZsKYSsL4hKuBERbrxtaWS2mNM8xW2dRdco/NDNZrGRVGSUVsV1hsfK\nCoTlRZAtascJGXJV3MfSRAdw52PjtNWIEOdfasb4nwTgIpPNYKK0Aj1fxJlGfQo/\nerN3vXUlARbTVwMuRBZPIgshIX30y0Ww0ZxcBGvQFW9JYdLsr6Wz0HKq2lbeHKI1\nJQJ+itFz93Zj/1DMH87APo2XJxaO/zwalKY2hhmEhwKBgQD9GVCFFpb/L31PU6mp\nl835bgEEalYid39bppmI6jrMSG8l0xZi3bB7sWS99Pbk0LqVxHCL2btK7UYjT3c8\nqaYsI9k3K9JdGFvZUfcdLyszYczAEIMUv0l65nWdKii0MemBj6EYcp+Hfc68oIGc\n/v+qpYgfjRpTwMaXVQfYwO2ltwKBgQDQDMDLTbBcqLodRvxcUVt1LAThbHxO6/rz\nSbwPR0N06WFs7l9rXUmTYIMyaqgNngwo3+9TS2Sz9gBd0F6RKBREebD0h7/+QVlA\naPKbcmcjbYJ47QGqhEaHDRosMYVrUJFBVC/EtKBj6/BLF0j+nH1q4vu7X9foSVMD\nZxCsuFL3ZwKBgG+0xYoH31r/ncHuPfqhCoKlH4PQXvXVYfuUez0njA3vhkbedIns\nKGFfeQQx4uo4ibFiQv4mefhm4sbg4tJ+Wd4vcEZea/k0sA0plPRnhhymdJTsdL4q\ncwbwQka8fbySLupE9yfwJyLIzv8HpE0jarnpVzv9rfn7ImtWVyE+fWTfAoGAVmRV\nUpbKG0/9KNcnR/aIsdk7lZgE7ojTRl9h9j4zZsLar+80NFMikE5NbIwZiL4OcpK6\nwK3X/VqzwEEcY85uzBh0QLZ2JVBhjXuG8sHIzk9VFH3maTZQSxhHu/48Vtm315br\n1xTiXVvGBoh+ySuWcOIcgixEbbK1A/6yT+ainRUCgYBSbftYQte+FCyIRnxIEWT/\nB2Fh9byZ2+mM45Z/6YYNEAHoFQciaBrPnUdODkCFZmaT03rkOk+JJT3/sNiHnblh\nh8HJP48PsyXEbKH7eY3SESsFuDx4fZ50wCGq5SXH7iHroT6Ar5aBV1F2j6yxvqjs\nyvAk08scfrZfhyltFC3nEQ==\n-----END PRIVATE KEY-----\n',
-        client_email: 'banhcanhcua@banhcanhcua.iam.gserviceaccount.com',
-        client_id: '102971638354124418377',
+          '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDsB695dTIEf0bx\ndKOhnymiljEHJrMf83i0ZhgCJiy++MIbmpvWHXNvOBW3Bv318FIy83VWeO0j4LPD\nk7xgFOxc6Nk+T6b9PPbIWUMm9UDOy7MuhnYq6VbO75xF/2tjzM7MYWYB9Hm0d5zk\nWxJ7Bvxx6eO0GgkAZ+kQaqxyitpLIzaVES2qx0XPf0B1xNG0/ZQvyg/5CM3JeswT\nZ+UlCFhiQuVS1CyyNw0KVRa6AOK1ioHt5rpLdMXRDTyBzh9/8BRI6NoCPOUJfFwK\nke/EozlLN1I1WD0Pjs2V35JwCgMzIR11sZMTAvCZkCHtM+pQNXY09OZPNKMJ18fu\nZsdt+IuxAgMBAAECggEAAjQY1MhIemyabnL5e270y2JIkeRaxBUYpDfXHd9aXUFi\n79wJJr4T+k6qkTtc+pikQ8/XDBgelU5Uj00H81kD/eK58yV44yCtvcrA4D0Q6P1T\ng78t8jzxxQZ3+IVSbNZC0KX7dvrfz1SrNSHj3HHWayp/qDTyruYexxBKjNqJVYM5\njmY+O0jwhRvd7pr5CtvzPeU0lYcLxzpcwirzEjVFCvNr7yyXiT7mDxqAjBOIuxPj\nEkk9yycSe8SYhNEqBiZJB9EyX5fXGxetgHUJf8N+jRYr5YC4o7COF+5b5b+OvUX7\nB6HwkZl9sdeNDMg2zUKhYTYCxM3orpqqrgjPSTrPmQKBgQD3WJwpv5gnOsfwkirm\nI2/G1cExYGNnpOG+r3zy1vflAN4rsmCFek9H0XuvYiUovovy6QJ5aJx2ecRsQYqA\nnLt876nQ2RWNTr7j92gGEH4VBfILwCGJOuThSbr6LdVl9FFiR/ZF5Dlpfk4GAJF6\n2tiNWxE+sK6tteLBLtRqTzEsxQKBgQD0SbiarPpXZTQfOaAQmUw1UphTGNXyVjDf\na/1lcUcWm/yEqEBPNcVVObrvkvXRjvgUoVFJcC+P6dX6aGzUzS3SO4Nvwp9YLQ7P\nrR+/8hK9PKtx+ESFNvrEjcjBN+dITuXrdUsVB25mQtXI8FwJch0czQixY80YMLvu\n9DoDkCDp/QKBgDFDj87s3yQpG/t5UVwHANNMba8k8IeLGn89OpivYi5VTurLG1ha\ndQHr4kObO6Vy1jLqX9jIkikytYGOSES3csw+e8ciBZ3gajrDYw+aJ1KOnZfji4pm\nlYGdisUbbd5hm/gENzPScfDl/CpL4K3keq8kzTl8PT5R9LjfV+VYooW1AoGAWDUG\nY1NyUXxJhbzY/yVbTyWzus2M8yQMIaBsruRoNtG8LGpUTkWsK0ndJgR6nmBxU4Gs\nSEgp5F0a1oA+S9iKYw76NrCfuMcMQhDRFg3illIB1fU/SJrBkZdgleQJryJOAucn\nZUB5rJMVfqjLkt2RhYTDTsoqlEGEmpO1HvQ77kECgYEA9uyDDfiRrd9aPz9ZGgPd\nzIqpKz9b9K1epqjRx2JRgbf0OVKwuHYEq21SK1nj0hB5KTzhC7BdM8SOSkZLi1qj\n6wdvE7BLKu8sChg6hi+XEGD41t+3K1Mz+ff0rNKp+kc3sx0dd+hVwwZtu5oXcszf\nw80BSuvDA3WYLmZstRABG8E=\n-----END PRIVATE KEY-----\n',
+        client_email: 'project-t@project-t-414303.iam.gserviceaccount.com',
+        client_id: '107493961320498209508',
       },
       scopes: ['https://www.googleapis.com/auth/drive'],
     });
@@ -26,17 +26,22 @@ class GoogleDriveService {
       auth: this.oauth2Client,
     });
 
-    const response = await drive.files.get({ fileId, alt: 'media' });
-    const imageType = response.headers['content-type'];
-    const file = response.data as unknown as Blob;
-    const base64 = btoa(
-      new Uint8Array(await file.arrayBuffer()).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        ''
-      )
-    );
+    const response = await drive.files.get({
+      fileId,
+      fields:
+        'id, name, webViewLink, webContentLink, thumbnailLink, exportLinks',
+    });
 
-    return 'data:' + imageType + ';base64,' + base64;
+    // const imageType = response.headers['content-type'];
+    // const file = response.data as unknown as Blob;
+    // const base64 = btoa(
+    //   new Uint8Array(await file.arrayBuffer()).reduce(
+    //     (data, byte) => data + String.fromCharCode(byte),
+    //     ''
+    //   )
+    // );
+
+    return 'data';
   };
 
   createFile = async (payload: FormData) => {
