@@ -10,7 +10,6 @@ const schema = yup.object({
     lastName: yup.string().trim().required(),
     phoneNumber: yup.string().trim().required(),
   }),
-  price: yup.number().notRequired(),
   status: yup.string().trim().required(),
   channelId: yup.string().trim().required(),
   createBy: yup.string().trim().required(),
@@ -40,14 +39,14 @@ export async function create(req: Request): Promise<IResponse> {
       };
     }
 
-    const { createBy, desc, patientInfo, price, status, channelId, title } =
-      body;
+    const { createBy, desc, patientInfo, status, channelId, title } = body;
 
     const result = await db.query(fql`
-      Tickets.create({ title: ${title}, desc: ${desc}, channelId: ${channelId}, status: ${status}, patientInfo: ${patientInfo}, createBy: ${createBy}, price: ${price} })
+      Tickets.create({ title: ${title}, desc: ${desc}, channelId: ${channelId}, status: ${status}, patientInfo: ${patientInfo}, createBy: ${createBy} })
     `);
 
     const ticketId = result.data?.['id'];
+
     return {
       data: {
         ticketId,

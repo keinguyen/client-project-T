@@ -1,7 +1,8 @@
+import { AttachmentFile } from '../attachments/interface';
+
 export enum TicketAPI {
   GET_LIST = 'tickets.api.getList',
   CREATE_TICKET = 'tickets.api.createTicket',
-  GOOGLE_AUTHENTICATE = 'tickets.api.google',
 }
 
 export enum TicketStatus {
@@ -11,6 +12,7 @@ export enum TicketStatus {
 }
 
 export type Ticket = {
+  id?: string;
   createBy: string;
   title: string;
   desc: string;
@@ -22,4 +24,5 @@ export type Ticket = {
     phoneNumber: string;
   };
   status: TicketStatus;
+  attachmentFiles?: AttachmentFile[];
 };

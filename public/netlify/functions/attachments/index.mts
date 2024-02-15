@@ -1,29 +1,26 @@
 import { response } from '../helpers/request';
 import { IResponse } from '../interfaces';
-import { create } from './create';
-import { getTickets } from './getTickets';
-import { TicketAPI } from './interface';
-// import Drive from './services/google-drive.services';
+import { AttachmentAPI } from './interface';
+import { uploadFile } from './upload';
 
 type APIFunction = {
   [key: string]: (res: Request) => Promise<IResponse>;
 };
 
 const availableAPIs: Record<string, APIFunction> = {
-  GET: {
-    [TicketAPI.GET_LIST]: getTickets,
-  },
   POST: {
-    [TicketAPI.CREATE_TICKET]: create,
+    [AttachmentAPI.UPLOAD_ATTACHMENT_FILE]: uploadFile,
   },
 };
 
 export default async (req: Request) => {
-  const subject = req.headers.get('subject') as TicketAPI | undefined;
+  const subject = req.headers.get('subject') as AttachmentAPI | undefined;
   let res: IResponse = {
     data: { error: 'NO_VALID_METHOD' },
     status: 400,
   };
+
+  console.log('req.method:', req.method);
 
   if (subject) {
     const callApi =
