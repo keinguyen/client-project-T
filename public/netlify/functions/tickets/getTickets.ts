@@ -12,9 +12,11 @@ export async function getTickets(req: Request): Promise<IResponse> {
     const url = new URL(req.url);
     const status = url.searchParams.get('status');
 
-    const ticketRes = await db.query<{ data: Ticket[] } | null>(
-      fql`Tickets.all().where(.status == ${status}) { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
-    );
+    const query = status
+      ? fql`Tickets.all().where(.status == ${status}) { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
+      : fql`Tickets.all() { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`;
+
+    const ticketRes = await db.query<{ data: Ticket[] } | null>(query);
 
     const tickets = ticketRes.data?.data;
     if (tickets?.length) {
