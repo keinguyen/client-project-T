@@ -16,11 +16,9 @@ export const router = createBrowserRouter([
         },
         children: [
           {
-            path: Route.Connections,
+            path: Route.Tickets,
             async lazy() {
-              const { TicketScreen: Component } = await import(
-                '@/screens/Ticket'
-              );
+              const { Tickets: Component } = await import('@/screens/Tickets');
 
               return { Component };
             },

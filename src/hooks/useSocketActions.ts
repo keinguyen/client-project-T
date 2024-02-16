@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { io } from 'socket.io-client';
-import { useSocketCommit, useSocketLazySelector } from '../store/socket';
+import { useGeneralCommit, useGeneralLazySelector } from '../store/general';
 import { useLocalStorage } from '@keinguyen/hooks';
 import { StorageKey } from '@/constants/storage';
 
 export function useSocketActions() {
-  const socketCommit = useSocketCommit();
-  const getSocket = useSocketLazySelector((store) => store.socket);
+  const socketCommit = useGeneralCommit();
+  const getSocket = useGeneralLazySelector((store) => store.socket);
   const [token] = useLocalStorage(StorageKey.Token);
 
   const init = useCallback(() => {

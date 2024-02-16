@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useSocketSelector } from '@/store/socket';
+import { useGeneralSelector } from '@/store/general';
 import { getAllTickets } from '@/services/tickets';
 import { http } from '@/services/http';
+import { ITicket } from '@/interfaces/tickets';
 
-export function useConnectionList() {
-  const socket = useSocketSelector((store) => store.socket);
-  const [connectionList, setConnectionList] = useState([] as any[]);
+export function useTickets() {
+  const socket = useGeneralSelector((store) => store.socket);
+  const [tickets, setTickets] = useState([] as ITicket[]);
 
   useEffect(() => {
     if (!socket) {
@@ -21,7 +22,7 @@ export function useConnectionList() {
 
         const response = await getAllTickets(abortCtrl);
 
-        setConnectionList(response);
+        setTickets(response);
       } catch (err) {
         if (!http.isHttpAbort(err)) {
           console.error('FAILED GETTING TICKET LIST');
@@ -39,6 +40,6 @@ export function useConnectionList() {
   }, [socket]);
 
   return {
-    connectionList,
+    tickets,
   };
 }

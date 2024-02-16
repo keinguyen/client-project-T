@@ -3,7 +3,7 @@ import { useLocalStorage } from '@keinguyen/hooks/useStorage';
 
 import { StorageKey } from '@/constants/storage';
 import { Route } from '@/constants/routes';
-import { SocketProvider } from '@/store/socket';
+import { GeneralProvider } from '@/store/general';
 
 import { useProfileEffect } from './hooks/useProfileEffect';
 import { useRedirectEffect } from './hooks/useRedirectEffect';
@@ -21,8 +21,8 @@ export function Main() {
   const [token] = useLocalStorage(StorageKey.Token);
 
   return !token ? <Navigate to={Route.Login} /> : (
-    <SocketProvider>
+    <GeneralProvider>
       <PrivateRoute />
-    </SocketProvider>
+    </GeneralProvider>
   );
 }

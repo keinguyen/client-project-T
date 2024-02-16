@@ -15,7 +15,7 @@ export function useRedirectEffect() {
     }
 
     if (role === 'admin') {
-      navigate(Route.Connections);
+      navigate(Route.Tickets);
     }
   }, [pathname, navigate]);
 }

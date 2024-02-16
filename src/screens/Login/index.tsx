@@ -89,7 +89,7 @@ function LoginPage() {
 function PrivateRoute({ token }: { token: string }) {
   const role = useMemo(() => getRoleFromToken(token), [token]);
 
-  const path = role === 'admin' ? Route.Connections : Route.Main;
+  const path = role === 'admin' ? Route.Tickets : Route.Main;
 
   return <Navigate to={path} />;
 }

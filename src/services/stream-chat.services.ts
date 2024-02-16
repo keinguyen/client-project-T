@@ -4,68 +4,85 @@ export enum ChatEvents {
   connectedUser = 'connected-user',
 }
 
+interface IConnectUserParams {
+  userId: string;
+  name: string;
+  chatToken?: string;
+}
+
+const STREAM_CHAT_INSTANCE = 'mnac4zfhsxbr';
+
+
 class StreamChatService {
-  static _instance: StreamChatService;
-  private STREAM_CHAT_INSTANCE = 'mnac4zfhsxbr';
+  private client: StreamChat | null = null;
+  private connectPromise: Promise<StreamChat> | null = null;
 
-  static getInstance() {
-    if (!StreamChatService._instance) {
-      StreamChatService._instance = new StreamChatService();
-    }
-    return StreamChatService._instance;
-  }
-
-  constructor(private _client = StreamChat.getInstance('mnac4zfhsxbr')) {}
-
-  async registerPushToken() {}
-
-  init = async (params: {
-    userId: string;
-    name: string;
-    chatToken?: string;
-  }) => {
-    const { name, userId, chatToken } = params;
+  private connect = async (params: IConnectUserParams) => {
     console.log('*********** Init stream chat ***********');
-    if (!this._client) {
-      this._client = StreamChat.getInstance(this.STREAM_CHAT_INSTANCE);
+
+    if (!this.client) {
+      this.client = StreamChat.getInstance(STREAM_CHAT_INSTANCE);
     }
 
+    await this.connectUser(params);
+
+    return this.client;
+  };
+
+  public connectUser = async ({ userId, name, chatToken }: IConnectUserParams) => {
     try {
-      const connectedUser = await this._client.connectUser(
+      if (!this.client) {
+        throw new Error('NO CLIENT');
+      }
+
+      const connectedUser = await this.client.connectUser(
         {
           id: userId,
           name,
         },
         chatToken
       );
-      if (connectedUser) {
-        // TODO: handle connect completed
-      } else {
-        // TODO: handle error
-      }
-    } catch (error) {
-      // TODO: handle error
-    }
 
-    return this._client;
+      if (!connectedUser) {
+        throw new Error('NO_USER_CONNECTED');
+      }
+
+      // TODO: handle connect completed
+    } catch (error) {
+      console.log('[FAILED STREAM CHAT]', error);
+    }
   };
 
-  get client() {
-    return this._client;
-  }
+  public init = async (params: IConnectUserParams) => {
+    if (!this.connectPromise) {
+      this.connectPromise = this.connect(params);
+    }
 
-  getChannelById = async (channelId: string) => {
+    const client = await this.connectPromise;
+
+    return client;
+  };
+
+  public getChannelById = (channelId: string) => {
     try {
-      return this._client.getChannelById('messaging', channelId, {});
+      if (!this.client) {
+        throw new Error('NO CLIENT');
+      }
+
+      return this.client.getChannelById('messaging', channelId, {});
     } catch (error) {
       return undefined;
     }
   };
 
-  fetchChannelByUserId = async () => {
-    const filter = { type: 'messaging', members: { $in: ['demo3'] } };
+  public fetchChannelByUserId = async () => {
+    if (!this.client) {
+      throw new Error('NO CLIENT');
+    }
 
-    const channels = await this._client.queryChannels(
+    const filter = { type: 'messaging', members: { $in: [this.client.userID || ''] } };
+
+    const channels = await this.client.queryChannels(
       filter,
       { last_message_at: -1 },
       {
@@ -73,20 +90,21 @@ class StreamChatService {
         state: true,
       }
     );
+
     return channels;
   };
 
-  sendMessage = async (channelId: string, text?: string) => {
-    const channel = await this._client.getChannelById(
-      'messaging',
-      channelId,
-      {}
-    );
+  public sendMessage = async (channelId: string, text?: string) => {
+    if (!this.client) {
+      throw new Error('NO CLIENT');
+    }
 
-    channel.sendMessage({
+    const channel = this.getChannelById(channelId);
+
+    channel?.sendMessage({
       text,
     });
   };
 }
 
-export default StreamChatService.getInstance();
+export default new StreamChatService();
