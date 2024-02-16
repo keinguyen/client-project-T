@@ -1,70 +1,86 @@
-import {
-  Channel as ChannelContainer,
-  ChannelHeader,
-  Chat,
-  MessageInput,
-  MessageList,
-  Thread,
-  Window,
-} from 'stream-chat-react';
-import 'stream-chat-react/dist/css/v2/index.css';
 import { useState } from 'react';
-import { Channel, StreamChat } from 'stream-chat';
+import Drawer from '@mui/material/Drawer';
 
-import { useTickets } from './hooks/useTicket';
 import useChatListener from '@/hooks/useChatListener';
 import streamChatServices from '@/services/stream-chat.services';
 import { useGeneralSelector } from '@/store/general';
-import { ITicket } from '@/interfaces/tickets';
+import { TicketStatus, type ITicket } from '@/interfaces/tickets';
+import { Loader } from '@/components/stateless/Loader';
+import { useTickets } from './hooks/useTicket';
+import { Ticket } from './components/Ticket';
+import { ChatWindow } from './components/ChatWindow';
+import { ChatContainer, Container, TicketsStyled, Title, TopNav } from './Tickets.styles';
+import { StatusFilter } from './components/StatusFilter';
 
-function TicketsContent({ client }: { client: StreamChat }) {
-  const [activeChannel, setActiveChannel] = useState<Channel>();
+type ActiveChanel = ReturnType<typeof streamChatServices.getChannelById>;
 
-  const { tickets } = useTickets();
+
+function TicketsContent() {
+  const chatClient = useGeneralSelector((store) => store.chatClient)!;
+  const [activeChannel, setActiveChannel] = useState<ActiveChanel>();
+  const [currentStatus, setCurrentStatus] = useState(TicketStatus.WAITING);
+
+  const { loading, tickets } = useTickets(currentStatus);
+
+  const clientUserID = chatClient.userID;
 
   const onSelectItem = async ({ channelId }: ITicket) => {
     const channel = streamChatServices.getChannelById(channelId);
 
-    if (!channel || !client.userID) {
+    if (!channel || !clientUserID) {
       alert('NO CHANEL OR USER ID AVAILABLE');
       return;
     }
 
+    setActiveChannel(channel);
+
     const membersInChannel = await channel.queryMembers({
-      user_id: { $in: [client.userID] },
+      user_id: { $in: [clientUserID] },
     });
 
     if (membersInChannel.members.length === 0) {
-      await channel.addMembers([client.userID]);
+      await channel.addMembers([clientUserID]);
     }
+  };
 
-    setActiveChannel(channel);
+  const handleCloseDrawer = () => {
+    setActiveChannel(undefined);
+  }
+
+  const handleStatusChange = (status: TicketStatus) => {
+    setCurrentStatus(status);
   };
 
   return (
-    <Chat client={client}>
-      <div>
-        {tickets.map((ticket) => {
-          return (
-            <div key={ticket.id} onClick={() => onSelectItem(ticket)}>
-              Bạn có yêu cầu từ đại lý: {ticket.title}
-            </div>
-          );
-        })}
-        {activeChannel && (
-          <ChannelContainer channel={activeChannel}>
-            <Window>
-              <ChannelHeader />
-              <MessageList />
-              <div className="fixed bottom-0 min-w-full">
-                <MessageInput />
-              </div>
-            </Window>
-            <Thread />
-          </ChannelContainer>
-        )}
-      </div>
-    </Chat>
+    <TicketsStyled>
+      <TopNav>
+        <Title>Danh sách đơn chờ xét</Title>
+        <StatusFilter
+          activeStatus={currentStatus}
+          onClick={handleStatusChange}
+        />
+      </TopNav>
+      <Container>
+        {loading && <Loader scale={1.2} />}
+        {!loading && !!tickets.length && tickets.map((ticket) => (
+          <Ticket
+            {...ticket}
+            key={ticket.id}
+            onClick={onSelectItem}
+          />
+        ))}
+        {!loading && !tickets.length && <>Không có ticket</>}
+      </Container>
+      <Drawer
+        open={!!activeChannel}
+        anchor="right"
+        onClose={handleCloseDrawer}
+      >
+        <ChatContainer>
+          <ChatWindow channel={activeChannel!} />
+        </ChatContainer>
+      </Drawer>
+    </TicketsStyled>
   );
 }
 
@@ -73,5 +89,5 @@ export function Tickets() {
 
   useChatListener();
 
-  return chatClient ? <TicketsContent client={chatClient} /> : null;
+  return chatClient ? <TicketsContent /> : null;
 }

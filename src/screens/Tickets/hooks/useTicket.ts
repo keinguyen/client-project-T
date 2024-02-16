@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useGeneralSelector } from '@/store/general';
 import { getAllTickets } from '@/services/tickets';
 import { http } from '@/services/http';
-import { ITicket } from '@/interfaces/tickets';
+import { ITicket, TicketStatus } from '@/interfaces/tickets';
 
-export function useTickets() {
+export function useTickets(status: TicketStatus) {
   const socket = useGeneralSelector((store) => store.socket);
   const [tickets, setTickets] = useState([] as ITicket[]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!socket) {
@@ -20,7 +21,9 @@ export function useTickets() {
         abortCtrl.abort();
         abortCtrl = new AbortController();
 
-        const response = await getAllTickets(abortCtrl);
+        setLoading(true);
+
+        const response = await getAllTickets(status, abortCtrl);
 
         setTickets(response);
       } catch (err) {
@@ -28,6 +31,8 @@ export function useTickets() {
           console.error('FAILED GETTING TICKET LIST');
         }
       }
+
+      setLoading(false);
     }
 
     socket.on('ticketlistChanged', fetch);
@@ -37,9 +42,10 @@ export function useTickets() {
       socket.off('ticketlistChanged', fetch);
       abortCtrl.abort();
     };
-  }, [socket]);
+  }, [socket, status]);
 
   return {
+    loading,
     tickets,
   };
 }

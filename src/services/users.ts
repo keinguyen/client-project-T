@@ -1,6 +1,6 @@
-import { API } from "@/constants/api";
-import { http } from "./http";
-import { StorageKey } from "@/constants/storage";
+import { API } from '@/constants/api';
+import { http } from './http';
+import { StorageKey } from '@/constants/storage';
 
 export async function login(params: { username: string, password: string }) {
   const response = await http.get<{ accessToken: string; refreshToken: string }>(API.Users, params);

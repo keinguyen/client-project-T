@@ -5,12 +5,15 @@ import { IResponse } from '../interfaces';
 import { AttachmentFile } from '../attachments/interface';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getTickets(res: Request): Promise<IResponse> {
+export async function getTickets(req: Request): Promise<IResponse> {
   try {
     const db = getDb();
 
+    const url = new URL(req.url);
+    const status = url.searchParams.get('status');
+
     const ticketRes = await db.query<{ data: Ticket[] } | null>(
-      fql`Tickets.all() { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
+      fql`Tickets.all().where(.status == ${status}) { title, desc, status, patientInfo, createBy, price, id, ts, channelId }`
     );
 
     const tickets = ticketRes.data?.data;
