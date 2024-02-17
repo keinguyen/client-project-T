@@ -12,6 +12,7 @@ import {
 } from "./Ticket.styles";
 import { DollarIcon } from "@/components/stateless/Icons/DollarIcon";
 import { useGeneralCommit, useGeneralSelector } from "@/store/general";
+import { parsePrice } from "@/helpers/number";
 
 interface Props extends ITicket {}
 
@@ -47,7 +48,7 @@ export function Ticket(ticket: Props) {
         {typeof price === 'number' && (
           <Cost>
             <DollarIcon width={14} />
-            {`${price}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            {parsePrice(price)}
           </Cost>
         )}
       </BottomContainer>

@@ -60,6 +60,12 @@ export function useInitChat(ticket?: ITicket | null) {
     init();
   }, [channelId, clientUserID]);
 
+  useEffect(() => {
+    if (!requestCallInfo) {
+      cancelCall();
+    }
+  }, [requestCallInfo, cancelCall]);
+
   return {
     requestCallInfo,
     chatClient,

@@ -5,7 +5,6 @@ import {
   ChannelHeader,
   Chat,
   MessageInput,
-  MessageList,
   Thread,
   Window,
 } from 'stream-chat-react';
@@ -22,6 +21,7 @@ import {
   VideoScreen,
 } from './ChatWindow.styles';
 import { useInitChat } from './hooks/useInitChat';
+import { ChatMessages } from '../ChatMessages';
 
 interface Props {
   open?: boolean;
@@ -74,7 +74,7 @@ export function ChatWindow({ open, ticket }: Props) {
                     <AcceptButton onClick={handleAcceptCall}>{requestButtonText}</AcceptButton>
                   </IncomingCall>
                 )}
-                <MessageList />
+                <ChatMessages />
               </MessageContainer>
               <MessageInput />
             </Window>
