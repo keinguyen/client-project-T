@@ -5,8 +5,11 @@ import {
   ChannelHeader,
   Chat,
   MessageInput,
+  MessageList,
   Thread,
   Window,
+  MessageSimple,
+  MessageContextValue,
 } from 'stream-chat-react';
 import Drawer from '@mui/material/Drawer';
 
@@ -21,11 +24,15 @@ import {
   VideoScreen,
 } from './ChatWindow.styles';
 import { useInitChat } from './hooks/useInitChat';
-import { ChatMessages } from '../ChatMessages';
+import { handleRenderText } from '../../Tickets.helpers';
 
 interface Props {
   open?: boolean;
   ticket?: ITicket | null;
+}
+
+function CustomMessage(props: Partial<MessageContextValue>) {
+  return <MessageSimple {...props} renderText={handleRenderText} />
 }
 
 export function ChatWindow({ open, ticket }: Props) {
@@ -64,7 +71,7 @@ export function ChatWindow({ open, ticket }: Props) {
     >
       <ChatWindowStyled>
         <Chat client={chatClient}>
-          <ChannelContainer channel={activeChannel}>
+          <ChannelContainer channel={activeChannel} Message={CustomMessage}>
             <Window>
               <ChannelHeader />
               <MessageContainer>
@@ -74,7 +81,7 @@ export function ChatWindow({ open, ticket }: Props) {
                     <AcceptButton onClick={handleAcceptCall}>{requestButtonText}</AcceptButton>
                   </IncomingCall>
                 )}
-                <ChatMessages />
+                <MessageList />
               </MessageContainer>
               <MessageInput />
             </Window>

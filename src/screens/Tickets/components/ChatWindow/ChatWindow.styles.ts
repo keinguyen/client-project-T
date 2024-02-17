@@ -9,6 +9,14 @@ export const ChatWindowStyled = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  .str-chat__thread-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 80%;
+    height: 100%;
+  }
 `;
 
 export const MessageContainer = styled.div`
