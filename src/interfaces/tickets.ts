@@ -28,3 +28,9 @@ export interface ITicket {
   channelId: string;
   attachmentFiles: ITicketAttachment[];
 }
+
+export interface IConversationResponse {
+  streamName: string;
+  accountId: string;
+  ticketId: string;
+}

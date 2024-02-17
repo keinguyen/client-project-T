@@ -25,5 +25,5 @@ export function Button({ layout, children, ...props }: Props) {
 }
 
 const ButtonStyled = styled(MUIButton)`
-  padding: 16px 0 10px;
+  padding: 16px 16px 10px;
 `;

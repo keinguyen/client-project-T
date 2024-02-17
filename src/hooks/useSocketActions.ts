@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { useGeneralCommit, useGeneralLazySelector } from '../store/general';
@@ -26,8 +27,26 @@ export function useSocketActions() {
     socketCommit({ socket: null })
   }, [getSocket, socketCommit]);
 
+  const subscribe = useCallback((event: string, action: (...args: any[]) => void) => {
+    const socket = getSocket();
+
+    socket?.on(event, action);
+
+    return () => {
+      socket?.off(event, action);
+    };
+  }, [getSocket]);
+
+  const emit = useCallback((event: string, data: any) => {
+    const socket = getSocket();
+
+    socket?.emit(event, data);
+  }, [getSocket]);
+
   return {
     init,
     disconnect,
+    subscribe,
+    emit,
   };
 }

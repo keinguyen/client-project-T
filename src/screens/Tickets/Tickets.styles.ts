@@ -20,9 +20,3 @@ export const Container = styled.div`
   width: 100%;
   gap: 8px;
 `;
-
-export const ChatContainer = styled.div`
-  width: calc(100vw - 60px);
-  max-width: 600px;
-  flex: 1;
-`;

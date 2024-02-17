@@ -2,6 +2,7 @@ import { white } from '@/constants/colors';
 import { statusColor } from '@/constants/tickets';
 import { TicketStatus } from '@/interfaces/tickets';
 import styled from 'styled-components';
+import { CallNotification } from '../CallNotification';
 
 
 export const TicketStyled = styled.div`
@@ -23,6 +24,24 @@ export const TicketStyled = styled.div`
     border-color: rgba(0, 0, 0, .5);
     top: -2px;
   }
+`;
+
+export const NotificationContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+`;
+
+export const NoticationIndicator = styled(CallNotification)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translate(50%, -50%);
 `;
 
 export const Title = styled.span`

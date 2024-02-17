@@ -26,13 +26,13 @@ export function useTickets(status: TicketStatus) {
         const response = await getAllTickets(status, abortCtrl);
 
         setTickets(response);
+        setLoading(false);
       } catch (err) {
         if (!http.isHttpAbort(err)) {
           console.error('FAILED GETTING TICKET LIST');
+          setLoading(false);
         }
       }
-
-      setLoading(false);
     }
 
     socket.on('ticketlistChanged', fetch);
