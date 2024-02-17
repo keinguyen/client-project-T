@@ -2,14 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ITicket } from "@/interfaces/tickets";
 import streamChatServices from "@/services/stream-chat.services";
 import { useGeneralSelector } from "@/store/general";
-import { useSocketActions } from "@/hooks/useSocketActions";
+import { acceptConversation } from "@/services/tickets";
 
 type ActiveChanel = ReturnType<typeof streamChatServices.getChannelById>;
 
 export function useInitChat(ticket?: ITicket | null) {
   const { id, channelId } = ticket || {};
-
-  const { emit } = useSocketActions();
 
   const chatClient = useGeneralSelector((store) => store.chatClient)!;
   const requestCallTickets = useGeneralSelector((store) => store.requestCallTickets);
@@ -25,9 +23,11 @@ export function useInitChat(ticket?: ITicket | null) {
   );
 
   const acceptCall = useCallback(() => {
-    emit('acceptConversation', requestCallInfo);
-    setIsAcceptedCall(true);
-  }, [emit, requestCallInfo]);
+    if (requestCallInfo) {
+      acceptConversation(requestCallInfo);
+      setIsAcceptedCall(true);
+    }
+  }, [requestCallInfo]);
 
   const cancelCall = useCallback(() => {
     setIsAcceptedCall(false);

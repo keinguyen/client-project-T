@@ -116,3 +116,4 @@ class HttpClient {
 }
 
 export const http = new HttpClient(`${location.origin}/.netlify/functions`);
+export const httpRender = new HttpClient(import.meta.env.VITE_SERVER);
