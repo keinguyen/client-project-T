@@ -18,6 +18,7 @@ function isValidBody(body: any): body is { username: string; password: string } 
 
 export async function query(req: Request): Promise<IResponse> {
   try {
+    console.time('start query user');
     const db = getDb();
     const url = new URL(req.url);
 
@@ -46,6 +47,7 @@ export async function query(req: Request): Promise<IResponse> {
 
     const tokenPayload = { userId: data.username, role: data.role };
 
+    console.timeEnd('start query user');
     return {
       data: {
         accessToken: createToken(tokenPayload),

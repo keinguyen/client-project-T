@@ -20,11 +20,10 @@ import {
   ChatWindowStyled,
   IncomingCall,
   MessageContainer,
-  VideoContainer,
-  VideoScreen,
 } from './ChatWindow.styles';
 import { useInitChat } from './hooks/useInitChat';
 import { handleRenderText } from '../../Tickets.helpers';
+import { StreamVideo } from '../StreamVideo';
 
 interface Props {
   open?: boolean;
@@ -89,14 +88,7 @@ export function ChatWindow({ open, ticket }: Props) {
           </ChannelContainer>
         </Chat>
 
-        {isAcceptedCall && !!requestCallInfo && (
-          <VideoContainer>
-            <VideoScreen
-              src={`https://viewer.millicast.com?streamId=${requestCallInfo.accountId}/${requestCallInfo.streamName}`}
-              allowFullScreen
-            />
-          </VideoContainer>
-        )}
+        {isAcceptedCall && !!requestCallInfo && <StreamVideo {...requestCallInfo} />}
       </ChatWindowStyled>
     </Drawer>
   );

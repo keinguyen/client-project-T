@@ -44,16 +44,3 @@ export const AcceptButton = muiStyled(Button)`
   padding: 8px 16px 4px;
   font-size: 12px;
 `;
-
-export const VideoContainer = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: calc(100vw - 600px);
-  height: 100%;
-`;
-
-export const VideoScreen = styled.iframe`
-  width: 100%;
-  height: 100%;
-`;
